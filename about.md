@@ -3,9 +3,9 @@ layout: page
 title: About
 ---
 
-Security Consultant [@Coalfire] (https://www.coalfire.com/) 
+Security Consultant [@Coalfire](https://www.coalfire.com/) 
 
-Research and blog about mobile related projects.
+Passionate about mobile related hacking.
 
 [Twitter](https://twitter.com/n0ps3)
 [Mastodon](@n0ps@infosec.exchange)
