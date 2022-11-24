@@ -27,7 +27,7 @@ But in a nutshell when approaching BLE we want to understand a few things. BLE u
 
 > “GATT is an acronym for the __Generic ATTribute__ Profile, and it defines the way that two Bluetooth Low Energy devices transfer data back and forth using concepts called __Services__ and __Characteristics__. It makes use of a generic data protocol called the __Attribute Protocol (ATT)__...”
 
-https://learn.adafruit.com/introduction-to-bluetooth-low-energy/gatt 
+[https://learn.adafruit.com/introduction-to-bluetooth-low-energy/gatt](https://learn.adafruit.com/introduction-to-bluetooth-low-energy/gatt)
 
 Typically we have a central device (computer, tablet, or phone) and a peripheral device (light, fridge, speaker, etc). Once the devices sync communication is served via GATT. Each operation is sent via a profile, service, and a set of characteristics. As can be seen below we have a write command to a device with the value of 564c005900f0aa captured in Wireshark. 
 
@@ -91,7 +91,6 @@ echo "Light off"
 gatttool -i hci0 -b 92:15:B9:99:C6:2E --char-write-req -a 0x0009 -n cc2433 > /dev/null
 ```
 
-Demo video:
-https://youtube.com/shorts/rgyljgQiLMA
+[Demo Video](https://youtube.com/shorts/rgyljgQiLMA)
 
 Clearly this is a simple BLE light so the impact is low on the scale of severity. But it does bring up questions around what it would mean if a Bluetooth lock or any other smart device could be tampered with remotely. Especially if the remote device is capable of being controlled unauthenticated. 
