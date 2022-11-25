@@ -4,20 +4,20 @@ title: Hacking BLE Communication via the Apollo LED Strip Light
 ---
 
 I have spent the last year reading, researching, and testing mobile applications in my free time. While slowly dabbling in IoT assessment methodologies. 
-The “Apollo Light” is one particular device that caught my attention over Christmas in 2021. The light is basically a strip light with mobile app integration. They connect to devices like Alexa and Echo allowing ease of use and access throughout the house.
+The “Apollo Light” is one particular device that caught my attention over Christmas in 2021. The light is basically a strip light with mobile app integration. They can be controlled by devices like Alexa allowing ease of use and access throughout the house.
 
-<img src="https://github.com/n0psn0ps/n0psn0ps.github.io/blob/master/assets/apolloPlaystore.png?raw=true" width="75%"/>
-
-My methodology was to take a sort of penetration testing approach and look at how the devices was interacting with the mobile application: 
+My methodology was to take a sort of penetration testing approach and look at how the device was interacting with the mobile application: 
 
 + Assess the BLE communication 
 + How is the mobile device communicating with the light
 + Can the BLE commands from the device be spoofed from another application
 
 ## Assessing the BLE Communication
-So first off I installed the necessary application to communicate with the LED light strip. This application is called Apollo Lighting and created by the developer [qh-tek](https://play.google.com/store/apps/developer?id=qh-tek). The developer seems to create various applications for BLE light management and is a Chinese based company. 
+So first off I installed the necessary application to communicate with the LED light strip. This application is called Apollo Lighting and created by the developer [qh-tek](https://play.google.com/store/apps/developer?id=qh-tek). The developer who appears to be based in China creates applications for BLE light management. 
 
-The Apollo Lighting application has various features that allow the light to be modified by audio either with a spin dial control, a playlist of songs, or voice audio.
+<img src="https://github.com/n0psn0ps/n0psn0ps.github.io/blob/master/assets/apolloPlaystore.png?raw=true" width="75%"/>
+
+The Apollo Lighting application controls the light either with a spin dial control, a playlist of songs, or voice audio.
 
 <img src="https://github.com/n0psn0ps/n0psn0ps.github.io/blob/master/assets/dial.png?raw=true" width="75%"/>
 
@@ -37,28 +37,26 @@ Once this operation is sent from the central device to the periphery an action i
 
 <img src="https://github.com/n0psn0ps/n0psn0ps.github.io/blob/master/assets/bluetoothSnoop?raw=true" width="75%"/>
 
-Conveniently this outputs a log file that can be loaded into Wireshark and filtered for various packets sent to and from the Android device. 
-
-So I first started with understanding what commands were being sent to and from my mobile device to the Apollo Lights. I carefully went through the Wireshark packet capture and located each UUID value and code that corresponded to the host and controller. 
+After enabling the setting I began changing the light color and turning it on and off. Then I pull the log file from my Android device and I carefully went through the Wireshark packet capture. Locating each UUID value and code that corresponded to the host and controller. 
 
 <img src="https://github.com/n0psn0ps/n0psn0ps.github.io/blob/master/assets/wireshark.png?raw=true" width="75%"/>
 
-Below is a key I quickly gathered from the data I found of various operations sent from the mobile device to the light. 
+Below is a key I quickly gathered. From the data I found various operations sent from the mobile device to the light. Each corresponding to a different state change on the device. 
 
 <img src="https://github.com/n0psn0ps/n0psn0ps.github.io/blob/master/assets/lightCodes.png?raw=true" width="75%"/>
 
 Briefly overviewing the Wireshark packet capture I noticed there was no credential based authentication happening between the Android device and Apollo light. So my next step was to control the LED strip without the recommended application.
 
 ## Sending Unauthenticated Commands to the Light
-After capturing and decoding the BLE communication I began playing with how I could control the Apollo LED Strip Light. I decided to use a quick and easy approach with the nRF Connect application. This allowed me to connect to the device and send the necessary codes to control the Apollo light. Below is a screenshot of all the available GATT devices that I could connect to using the Android device.
+I began playing with how I could control the Apollo LED Strip Light. I decided to use a quick and easy approach with the nRF Connect application. This allowed me to connect to the device and send the necessary codes to control the Apollo light. Below is a screenshot of all the available GATT devices that I could connect to using the Android device.
 
 <img src="https://github.com/n0psn0ps/n0psn0ps.github.io/blob/master/assets/nfsconnectDevices.png?raw=true" width="75%"/>
 
-I connected to my Apollo light device named __AP-9215B999C62E__ by pressing the connect button. I then scrolled through the list of available services for my device all with fairly simple naming conventions. You can use the following [guide](https://www.bluetooth.com/specifications/assigned-numbers/) to figure out common UUID numbers used for commercial devices with BLE communication. 
+I connected to my Apollo light device named __AP-9215B999C62E__ by pressing the connect button. I then scrolled through the list of available services for my device. All with fairly simple naming convention. You can use the following [guide](https://www.bluetooth.com/specifications/assigned-numbers/) to figure out common UUID numbers used for commercial devices with BLE communication. 
 
 <img src="https://github.com/n0psn0ps/n0psn0ps.github.io/blob/master/assets/nfsconnectWrite.png?raw=true" width="75%"/>
 
-Using the key I built out before from the Wireshark dump. I was able to turn off and on the light and change it to various colors using the nRF Connection application. All I needed to to was press the up arrow for the WRITE, WRITE NO RESPONSE and input the values seen in the screenshot below.
+Using the key I built out before from the log file dump. I was able to turn off and on the light and change it to various colors using the nRF Connection application. All I needed to do was press the up arrow for the WRITE, WRITE NO RESPONSE and input the values seen in the screenshot below.
 
 <img src="https://github.com/n0psn0ps/n0psn0ps.github.io/blob/master/assets/apolloOff.png?raw=true" width="75%"/>
 
@@ -93,4 +91,4 @@ gatttool -i hci0 -b 92:15:B9:99:C6:2E --char-write-req -a 0x0009 -n cc2433 > /de
 
 [Demo Video](https://youtube.com/shorts/rgyljgQiLMA)
 
-Clearly this is a simple BLE light so the impact is low on the scale of severity. But it does bring up questions around what it would mean if a Bluetooth lock or any other smart device could be tampered with remotely. Especially if the remote device is capable of being controlled unauthenticated. 
+Clearly this is a simple BLE light so the impact is low on the severity scale. But it does bring up questions around what it would mean if a Bluetooth lock or any other smart device could be tampered with remotely. Especially if the remote device is capable of being controlled unauthenticated. 
