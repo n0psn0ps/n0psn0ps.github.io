@@ -3,7 +3,7 @@ layout: page
 title: About
 ---
 
-Security Consultant [@Coalfire](https://www.coalfire.com/) 
+Senior Mobile Security Engineer [@______](https://youtu.be/tCHKIdup5Lo?si=XZzLTlztVa6xmLZH)
 
 Passionate about mobile related hacking.
 
