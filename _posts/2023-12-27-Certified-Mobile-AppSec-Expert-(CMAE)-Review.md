@@ -10,7 +10,7 @@ I went through the entire [iOS Application Security](https://training.enciphers.
 
 ### Resources for Exam
 
-**********************************Mock Applications**********************************
+**Mock Applications**
 
 [https://www.insecureshopapp.com/](https://www.insecureshopapp.com/) 
 
