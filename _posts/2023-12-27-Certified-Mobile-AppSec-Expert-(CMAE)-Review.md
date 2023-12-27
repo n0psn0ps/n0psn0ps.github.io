@@ -1,5 +1,3 @@
-# Certified Mobile AppSec Expert (CMAE) Review
-
 The [Certified Mobile AppSec Expert (CMAE)](https://training.enciphers.com/p/mobile-application-security-android-ios) is a mobile security course focused on both iOS and Android platforms. The benefit of this exam is that it allows you to go at your own pace, does not require a mock report, nor any proof of concept exploits. Though you will need to be able to describe security vulnerabilities in detail with proof of concepts and mitigation. Personally I prefer a timed base test and mock report similar to OffSec exams. 
 
 ### Background
