@@ -1,4 +1,3 @@
-# Review: Certified iOS Security Engineer (CISE) by 8kSec
 
 ---
 
