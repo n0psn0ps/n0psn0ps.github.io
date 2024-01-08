@@ -5,7 +5,7 @@ The [Certified iOS Security Engineer (CISE)](https://8ksec.io/cise/) is a mobi
 
 ### The Exam
 
-The exam is very straight forward you have 24 hours to provide screenshots with explanation of each issue or vulnerability found. Then 12 hours for report writing afterwards. I find this very similar to the OffSec exams. Once the 24 hours is up you loose access to your Corellium account. All the applications and software you need is on the provided Corellium device. You will not have to waste time installing tools or tweaks on the virtual device. 
+The exam is very straight forward you have 24 hours to provide screenshots with explanation of each issue or vulnerability found. Then 12 hours for report writing afterwards. I find this very similar to the OffSec exams. Once the 24 hours is up you lose access to your Corellium account. All the applications and software you need is on the provided Corellium device. You will not have to waste time installing tools or tweaks on the virtual device. 
 
 Your ability to find various vulnerabilities and bypasses for iOS applications will be tested. This can be anything from bypassing common protections to writing custom scripts. Additionally you will need familiarity with common tools for static and dynamic analysis. Such as frida, ghidra, hopper, lldb, and other mobile related tooling. 
 
