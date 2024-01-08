@@ -1,6 +1,8 @@
 
 ---
 
+![CISE](/assets/certified-ios-security-engineer-cise.png)
+
 The [Certified iOS Security Engineer (CISE)](https://8ksec.io/cise/) is a mobile security course focused on iOS application testing put together by [8kSec](https://8ksec.io/). I went through their training covering mobile malware analysis but opted for the CISE instead of the Certified Mobile Malware Reverse Engineer (CMMRE). I did this because it mostly reflect my day to day work and what I personally specialize in professionally. Though I plan on taking the CMMRE in the future.
 
 ### The Exam
