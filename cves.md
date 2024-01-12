@@ -1,6 +1,6 @@
 ---
-layout: page
-title: "CVEs"
+layout: default
+title: CVEs
 permalink: /cves/
 ---
 
