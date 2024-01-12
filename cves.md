@@ -5,9 +5,9 @@ permalink: /cves/
 ---
 
 <ul>
-  {% for post in site.cves %}
+  {% for cve in site.cves %}
     <li>
-      <a href="{{ cves.url }}">{{ cves.title }}</a>
+      <a href="{{ cve.url }}">{{ cve.title }}</a>
     </li>
   {% endfor %}
 </ul>
