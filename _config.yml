@@ -39,6 +39,11 @@ author:
 # Custom vars
 version: 3.0.0
 
+# cve collections
+collections:
+  cves:
+    output: true
+
 # Navbar page list
 nav:
   - title: Blog
