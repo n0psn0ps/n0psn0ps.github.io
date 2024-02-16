@@ -210,7 +210,7 @@ We can locate the plist file saved in with the following title.
 
 That is pretty much it, I wanted to take two approaches to this scenario and see how I could bypass the password login functionality in the app. 
 
-I attempted to contact the developer [here](https://dfidev.com/index/0-3). Just to give them notice that I will be publishing a blog post on the research I have done to bypass the application controls. This was in an effort to allow them a time to fix any of these bypasses before hand.   
+I attempted to contact the developer [here](https://dfidev.com/index/0-3) to give them notice that I will be publishing a blog post on the research I have done. 
 
 ![Untitled](/assets/nsosecure%2012.png)
 
