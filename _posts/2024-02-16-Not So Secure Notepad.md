@@ -5,17 +5,17 @@ title: isNot Secure Notepad
 
 ![Untitled](/assets/blinko.jpeg)
 
-Lately I have been interested in iOS applications that boast the use of password protection and use some form of encryption with a local database. This stems from blogs such as [D20 Forensics](https://blog.d204n6.com/) and [Forensic Mike](https://www.forensicmike1.com/) peaking my interest in how to bypass “encrypted” security controls. 
+Lately I have been interested in iOS applications that boast the use of password protection or the use of encryption. The spark for this stems from blogs such as [D20 Forensics](https://blog.d204n6.com/) and [Forensic Mike](https://www.forensicmike1.com/). 
 
-Some of the applications I have stumbled on are simple in design using minimal security features. Either hiding the password to access the data in a local file or in a database of some kind. Which could be easily obtained via a jailbroken device or pulled from an iPhone backup. One application in particular is the Secure Notepad application. I found this while browsing the App Store one evening and decided to give myself the objective to reverse it. 
+Some of the applications I have stumbled on are simple in design using minimal security features. Either hiding the password to access the data in a local file or in a database of some kind. One application in particular is the Secure Notepad application. I found this while browsing the App Store one evening and decided to give myself the objective to reverse it. 
 
 ### File System Monitoring
 
-Typically I like to start my research and testing using [fsmon](https://github.com/nowsecure/fsmon), this is helpful to get a basic lay of the land. Giving me an idea of what the application may do on start in the private app directory on the OS or any changes made while using the app. Such as monitoring file creation, update, or deletion. During installation and setup of the app I noticed plist file being updated during the creation of the login screen password. 
+Typically I like to start my research and testing using [fsmon](https://github.com/nowsecure/fsmon), this is helpful to get a basic lay of the land. I can get an idea of what the application may access during start on the OS or any changes made while using the app. Such as monitoring file creation, update, or deletion. During installation and setup of the app I noticed a plist file being updated during the creation of the login screen password. 
 
 ### Local File System Analysis
 
-Using a jailbroken device I ssh’ed into the iPhone and zip all folders located in the private application directory. Then used sftp to pull this zip file locally to my test laptop and begun analysis locally of the unzipped file.
+Using a jailbroken device I zipped all folders located in the private application directory. Then used sftp to pull this zip file locally to my test laptop and begun analysis locally of the unzipped file.
 
 The application uses a plist file to hold all the note contents, login passwords, and security questions.  
 
