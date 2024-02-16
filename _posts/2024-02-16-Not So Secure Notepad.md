@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Not-So Secure Notepad
+title: isNot Secure Notepad
 ---
 
 ![Untitled](/assets/blinko.jpeg)
