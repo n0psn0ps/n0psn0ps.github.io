@@ -1,4 +1,7 @@
-# Not-So Secure Notepad
+---
+layout: post
+title: Not-So Secure Notepad
+---
 
 Lately I have been interested in iOS applications that boast the use of password protection and use some form of encryption with a local database. This stems from blogs such as [D20 Forensics](https://blog.d204n6.com/) and [Forensic Mike](https://www.forensicmike1.com/) peaking my interest in how to bypass “encrypted” security controls. 
 
@@ -14,7 +17,7 @@ Using a jailbroken device I ssh’ed into the iPhone and zip all folders located
 
 The application uses a plist file to hold all the note contents, login passwords, and security questions.  
 
-![Untitled](assets/nsosecure.png)
+![Untitled](/assets/nsosecure.png)
 
 ### Bypassing the Password and Security Question
 
@@ -24,15 +27,15 @@ The first method I decided to try was manually changing the password value found
 
 Using vscode I updated the answer and password string values in the plist xml file. To *All your base* and *n0psn0ps* respectively. 
 
-![Untitled](assets/nsosecure%201.png)
+![Untitled](/assets/nsosecure%201.png)
 
 Once these had been updated I save the file as notesdb.plist and pushed the updated file to the device.
 
-![Untitled](assets/nsosecure%202.png)
+![Untitled](/assets/nsosecure%202.png)
 
 Then I closed the app and reopened it so the new plist file would be loaded into the state of the application. Then logged in using my new password and attempted to use my new security question answer. 
 
-![Untitled](assets/nsosecure%203.png)
+![Untitled](/assets/nsosecure%203.png)
 
 ### **Bypass with Runtime Instrumentation**
 
@@ -40,7 +43,7 @@ Then I closed the app and reopened it so the new plist file would be loaded into
 
 I am first interested in bypassing the password login functionality. Now this could be done in a couple ways, but I would like to start with overwriting the password value in the plist file. I started by tracing the method responsible for this operation using `frida-trace`. The following class and method `DBManager returnSettingForKey:` will have the function we are interested in modifying. I loaded the mach-o binary into Ghidra and started looking into the function involved in making the comparison between the string set in the UI and the value of our plist file. Below is a quick screenshot of this method in Ghidra.
 
-![Untitled](assets/nsosecure%204.png)
+![Untitled](/assets/nsosecure%204.png)
 
 Now that I have established the correct method I need to iterated through each of these functions. Below is the method `returnSettingForKey:` source from Ghidra and a short description of each function. 
 
@@ -109,7 +112,7 @@ if (ObjC.available) {
 }
 ```
 
-![Untitled](assets/nsosecure%205.png)
+![Untitled](/assets/nsosecure%205.png)
 
 *Method 2: Always Return True*
 
@@ -156,7 +159,7 @@ void LoginViewController::passwordEnteredAction:(ID param_1,SEL param_2,ID param
 
 Our main function of interest is `FUN_100018860` which does our comparison of Var3 and Var4. This comparison is of the password saved in the plist file and the user supplied password. Using the `isEqualToString:` method in the `NSString` class.
 
-![Untitled](assets/nsosecure%206.png)
+![Untitled](/assets/nsosecure%206.png)
 
 If you are interested in learning more about this method you can read the Apple docs [here](https://developer.apple.com/documentation/foundation/nsstring/1407803-isequaltostring). Basically we want this to always return true. So we need to hook into this method in our application during runtime and replace the value with 0x1.  Below is our frida script.
 
@@ -185,31 +188,31 @@ if (NSString && NSString['- isEqualToString:']) {
 }
 ```
 
-![Untitled](assets/nsosecure%207.png)
+![Untitled](/assets/nsosecure%207.png)
 
 ### Dealing with Backups
 
 Secondly another possibly way of obtaining detailed information inside of the applications private directory is creating a backup of the iOS device using finder. I created a fully encrypted backup using Finder.
 
-![Untitled](assets/nsosecure%208.png)
+![Untitled](/assets/nsosecure%208.png)
 
 We can easily decrypt that backup using [mvt](https://docs.mvt.re/en/latest/) and begin analyzing the data locally.
 
-![Untitled](assets/nsosecure%209.png)
+![Untitled](/assets/nsosecure%209.png)
 
 Once the backup has been unpacked and decrypted I used `grep` to search for the notesdb keyword in the back up directory.
 
-![Untitled](assets/nsosecure%2010.png)
+![Untitled](/assets/nsosecure%2010.png)
 
 We can locate the plist file saved in with the following title. 
 
-![Untitled](assets/nsosecure%2011.png)
+![Untitled](/assets/nsosecure%2011.png)
 
 That is pretty much it, I wanted to take two approaches to this scenario and see how I could bypass the password login functionality in the app. 
 
 I attempted to contact the developer [here](https://dfidev.com/index/0-3). Just to give them notice that I will be publishing a blog post on the research I have done to bypass the application controls. This was in an effort to allow them a time to fix any of these bypasses before hand.   
 
-![Untitled](assets/nsosecure%2012.png)
+![Untitled](/assets/nsosecure%2012.png)
 
 ### Contact Timeline
 
