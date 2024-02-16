@@ -3,6 +3,8 @@ layout: post
 title: Not-So Secure Notepad
 ---
 
+![Untitled](/assets/blinko.jpeg)
+
 Lately I have been interested in iOS applications that boast the use of password protection and use some form of encryption with a local database. This stems from blogs such as [D20 Forensics](https://blog.d204n6.com/) and [Forensic Mike](https://www.forensicmike1.com/) peaking my interest in how to bypass “encrypted” security controls. 
 
 Some of the applications I have stumbled on are simple in design using minimal security features. Either hiding the password to access the data in a local file or in a database of some kind. Which could be easily obtained via a jailbroken device or pulled from an iPhone backup. One application in particular is the Secure Notepad application. I found this while browsing the App Store one evening and decided to give myself the objective to reverse it. 
