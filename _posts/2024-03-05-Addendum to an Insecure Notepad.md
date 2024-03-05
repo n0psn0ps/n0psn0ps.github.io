@@ -20,7 +20,7 @@ and
 ```
 
 Next we want to investigate the corresponding address for the `NSString` class and method `isEqualToString`. This class method is include in the Foundation framework and is used to compare the our password string during submission in the ViewController.
-We will `:ic` and then the name of the class and the `~` and `+` flags to filter out our method name keyword.
+We will use `:ic` and then the name of the class and the `~` and `+` flags to filter out our method name keyword.
 
 ```
 [0x104340000]> :ic NSString~+equal
@@ -47,7 +47,7 @@ Next I want to dynamically trace the function using `:dtf` we will identify the 
 true
 ```
 
-Then we will type in our password in the text field and click the check mark to submit out incorrect password. We can then see the `Retval` is 0 or false.
+Then we will type in our password in the text field and click the check mark to submit our incorrect password. We can then see the `Retval` is 0 or false.
 
 ![Untitled](/assets/added-img1.png)
 
