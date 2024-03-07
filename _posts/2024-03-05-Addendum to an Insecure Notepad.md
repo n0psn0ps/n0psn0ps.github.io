@@ -69,5 +69,5 @@ And we can see that the onLeave argument retval value is now 1. Which correspond
 [0x104a24000]> [dtf onLeave][Wed Feb 21 2024 20:58:24 GMT-0600] objc:NSString.isEqualToString:$@0x182627ca4 - args: . Retval: 1
 ```
 
-I would highly suggest taking the `r2firda` training put together by [@as0ler](https://twitter.com/as0ler) [@enovella_](https://twitter.com/enovella_) and [@hexsploitable](https://twitter.com/Hexploitable). This overview is just a small and simple snippet of what you will learn. 
+I would highly suggest taking the `r2frida` training put together by [@as0ler](https://twitter.com/as0ler) [@enovella_](https://twitter.com/enovella_) and [@hexsploitable](https://twitter.com/Hexploitable). This overview is just a small and simple snippet of what you will learn. 
 
