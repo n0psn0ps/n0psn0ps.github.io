@@ -58,7 +58,7 @@ true
 [0x6e1d180000]> [dtf onLeave][Thu Feb 22 2024 20:30:05 GMT-0800] 0x6e1d18f478@0x6e1d18f478 - args: 0xb400006f4e4d6110, 549577402868. Retval: 0x0
 ```
 
-![Untitled](/assets/ndkReject.jpeg)
+![Untitled](/assets/ndkReject.png)
 
 We can see that it returns false so all we will need to do is flip the value to be true and then our password should be accepted by the application. 
 So now to do this we will intercept the function and change the return value to 1. Using the `:di1` flag and the address of our function. 
@@ -69,7 +69,7 @@ So now to do this we will intercept the function and change the return value to 
 [0x6e1d180000]> [dtf onLeave][Thu Feb 22 2024 20:30:47 GMT-0800] 0x6e1d18f478@0x6e1d18f478 - args: 0xb400006f4e4d6110, 549577402868. Retval: 0x1
 ```
 
-![Untitled](/assets/ndkAccept.jpeg)
+![Untitled](/assets/ndkAccept.png)
 
 And now we can see that the prompt has been changed to `Password accepted!` with any value submitted in the TextField.  
 ## Automation
