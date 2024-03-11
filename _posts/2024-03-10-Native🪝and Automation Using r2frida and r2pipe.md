@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Addendum to an Insecure Notepad
+title: Native🪝and Automation Using r2frida and r2pipe
 ---
 
 ![Untitled](/assets/cover.jpeg)
