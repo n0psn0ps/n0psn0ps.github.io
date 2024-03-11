@@ -118,7 +118,7 @@ print("[X] Function bypassed. Any password now accepted.")
 Finally we will set the `sleep()` method to a high value so as not to immediately kill the application. 
 
 ```
-# sleep the application
+# sleep 
 time.sleep(10000)
 ```
 
