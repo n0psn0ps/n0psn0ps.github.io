@@ -7,7 +7,7 @@ title: Native🪝and Automation Using r2frida and r2pipe
 
 After taking some time to digest the content of a recent training presented at [ringzer0](https://ringzer0.training/trainings/mobile-reverse-engineering-r2frida.html) focused on the use of `r2frida`. I wanted to explore reversing an Android application that loads a few custom functions from a native library. First off this is originally an application put together by the folks at `Optiv` and can be found [here](https://www.optiv.com/insights/source-zero/blog/attacking-jni-boundary-frida). The main purpose is to demonstrate how to reverse native libraries in Android applications using `frida`. I will be demonstrating how to bypass a password check functionality done in the native library then automate the process. But do read their blog post as a stand alone it is super informative. 
 
-First off I will need to install the `ndkcrackme` application onto my physical Android device using `adb`. Then use `r2firda` to launch the application on the device and use the `:dc` command to start the application which will allow the native code to be loaded at runtime.
+First off I will need to install the `ndkcrackme` application onto my physical Android device using `adb`. Then use `r2frida` to launch the application on the device and use the `:dc` command to start the application which will allow the native code to be loaded at runtime.
 
 ```
 r2 'frida://launch/usb//com.optiv.ndkcrackme'
