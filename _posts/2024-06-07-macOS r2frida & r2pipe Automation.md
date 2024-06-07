@@ -30,11 +30,11 @@ Let's start with the two jailbreak bypasses found in the `DVIA` application. The
 ##### Jailbreak 1 Bypass 
 Loading the mach-o binary into `Hopper` we can search for the keyword jail and we see quite a few references. But our function of interest is `isJailbroken` in the `JailbreakDetectionVC` class as seen below.
 
-![[Pasted image 20240313133202.png]]
+![Untitled](/assets/Pasted image 20240313133202.png)
 
 In `r2frida` we will use the command `:dtf` to dynamically trace the function call when the first jailbreak button is tapped. We see when the button is pressed we are met with a Boolean return value. This is value is `0x1` or True. We will want to change this value to False so `0x0`.
 
-![[Pasted image 20240313133132.png]]
+![Untitled](/assets/Pasted image 20240313133132.png)
 
 We can use the command `:di0` or dynamically instrument the value and change it to zero. Below is a quick one-liner to overwrite the value.  
 
@@ -48,7 +48,7 @@ r.cmd(':di0 `:ic JailbreakDetectionVC~isJailbroken[0]`')
 Let's first talk over how the second check is being done and how we would like to approach this. In `Hopper` we see a reference to the [NSFileManager](https://developer.apple.com/documentation/foundation/nsfilemanager) class and method `fileExistsAtPath:`. 
 Reference one point to a file located on disk `/bin/bash` and the second `/usr/sbin/sshd`, a common file found on a jailbroken iPhone device. In our case, these will be files present on a macOS system. So ostensibly the machine will be "jailbroken" to the application. 
 
-![[Pasted image 20240313133437.png]]
+![Untitled](/assets/Pasted image 20240313133437.png)
 
 In iOS I used the following approach to bypass the check of the file. 
 
@@ -116,11 +116,11 @@ So first we need to use the `:/` command to locate strings passed as an argument
 
 Reference to **sshd**
 
-![[Pasted image 20240604224021.png]]
+![Untitled](/assets/Pasted image 20240604224021.png)
 
 Reference to **bash**
 
-![[Pasted image 20240604224037.png]]
+![Untitled](/assets/Pasted image 20240604224037.png)
 
 First, we will seek to the address of the hardcoded string value using `s` and the address. Then use the `wx 00` command to overwrite this reference.
 
@@ -148,23 +148,23 @@ echo "/xyc" | od -A n -t x1 | sed 's/ *//g'
 
 Using `Hooper` and searching for the keyword piracy we get quite a few different hits for the `SFAntiPiracy` check. Below is what you can see in Hopper but let's switch to `r2frida`. This will make out reversing and scripting process easier.
 
-![[Pasted image 20240313125758.png]]
+![Untitled](/assets/Pasted image 20240313125758.png)
 
-![[Pasted image 20240313125742.png]]
+![Untitled](/assets/Pasted image 20240313125742.png)
 
-![[Pasted image 20240313125950.png]]
+![Untitled](/assets/Pasted image 20240313125950.png)
 
 Similar to Hopper you can use `r2frida` to locate the associated functions for the class `SFAntiPiracy`. All of these functions deal with checking various artifacts on the device such as the installation of cydia, loading a cydia tweak, files typically inaccessible on a non-jailbroken device, system-level checks, etc. 
 
-![[Pasted image 20240313130237.png]]
+![Untitled](/assets/Pasted image 20240313130237.png)
 
 For brevity, I won't go into too much detail on checking these functions. But I do believe you should practice this on your own. As an example, I will show the first function `isTheApplicationCracked` being dynamically traced in `r2frida`. Again we see the use of a simple Boolean check against the application. It returns `0x1` when the check is run. 
 
-![[Pasted image 20240313130213.png]]
+![Untitled](/assets/Pasted image 20240313130213.png)
 
 One nice feature in `r2frida` is the ability to pipe the output into a scripting language pre-installed on the OS such as awk, grep, less, etc. In this example I wanted to use `awk` to parse the `:ic` output and apply this to our automation script.
 
-![[Pasted image 20240313124243.png]]
+![Untitled](/assets/Pasted image 20240313124243.png)
 
 Now that we have the functions we want to bypass we can apply this to a simple online for our python script. It would look something like this.
 
@@ -187,7 +187,7 @@ for addrs in addr:
 
 For this exercise, the original intent using `DVIA` is to patch the IPA with something like `ghidra` and the load it back onto the device. But again I wanted to take a different approach and use `r2frida`. Similar to our first exercise we will use the `:di0` command to dynamically instrument the function. 
 
-![[Pasted image 20240318204931.png]]
+![Untitled](/assets/Pasted image 20240318204931.png)
 
 ```
 :di0 `:ic ApplicationPatchingDetailsVC~+kill[0]`
@@ -198,22 +198,22 @@ For this exercise, the original intent using `DVIA` is to patch the IPA with som
 Analyzing the function previously in iOS there are two string values used as part of this login check. Using `Hopper` you can obtain these values. Alternatively, you can find them using `r2frida` as well ;)
 
 `Hopper`
-![[Pasted image 20240314165227.png]]
+![Untitled](/assets/Pasted image 20240314165227.png)
 
-![[Pasted image 20240314165655.png]]
+![Untitled](/assets/Pasted image 20240314165655.png)
 
 `r2frida`
 
-![[Pasted image 20240606172659.png]]
+![Untitled](/assets/Pasted image 20240606172659.png)
 
 Again we can see the use of [isEqualToString:](https://developer.apple.com/documentation/foundation/nsstring/1407803-isequaltostring ) method found in `NSString` class which is part of the Foundation library. But as we saw before we cannot use this as part of our bypass. So we can either overwrite or modify the string value. 
 
-![[Pasted image 20240314165526.png]]
+![Untitled](/assets/Pasted image 20240314165526.png)
 
 I would again like to show one last approach to bypassing a specific function. We can modify the value of an assembly code operation. Which is a great exercise in and of itself. We will start by seeking to the location of the loginMethod.  Then analyze the function in question.  
 Then we want to locate the address/es responsible for this function using the [cbz](https://developer.arm.com/documentation/dui0489/i/arm-and-thumb-instructions/cbz-and-cbnz) operations. In assembly, the cbz operation stands for compare and branch on zero. So based on this assumption, we can deduce that these two addresses handle the string comparison being done (I did not go into detail on how or why cbz is the operation you want to overwrite but you can use either `Hopper` or `r2frida` to do this analysis on your own). If this comparison is incorrectly handled by the application we will not be met with the login prompt.
 
-![[Pasted image 20240606170544.png]]
+![Untitled](/assets/Pasted image 20240606170544.png)
 
 So our approach will be to overwrite the instruction at that point with a no-operation or nop using the following:
 
@@ -233,7 +233,7 @@ print("[X] Application Patching login function now bypassed.\n")
 
 For our last exercise let's have some fun modifying the string value for the pop-up in the application patching exercise. First, we will need to search for the keyword Google using the following:
 
- ![[Pasted image 20240607101706.png]]
+![Untitled](/assets/Pasted image 20240607101706.png)
  
 Then we will seek to the location of the string Google and overwrite the value using the `w` command with our new text `n0ps was here`. 
 
