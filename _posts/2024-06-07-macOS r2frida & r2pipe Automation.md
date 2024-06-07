@@ -3,7 +3,7 @@ layout: post
 title: macOS r2frida & r2pipe Automation
 ---
 
-![Untitled](79da7b35e2295f5a409602b9cdc1cb69.jpg)
+![Untitled](/assets/79da7b35e2295f5a409602b9cdc1cb69.jpg)
 
 In this blog, I wanted to show an example of how to use how to use `r2frida` in macOS. Most of the ways I have used it up until now are solely on mobile platforms. I thought it would be a fun exercise to port over the iOS training application `DVIA` to macOS. 
 
