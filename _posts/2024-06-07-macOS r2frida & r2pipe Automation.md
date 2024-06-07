@@ -250,3 +250,4 @@ In this blog post, my goal was to show the reader how to use common techniques t
 - Dynamic tracing and instrumentation
 - Writing a custom frida script 
 
+Entire script is available [here](https://github.com/n0psn0ps/automation-r2pipe). Happy hacking :)
