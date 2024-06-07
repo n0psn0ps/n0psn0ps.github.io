@@ -17,7 +17,7 @@ This will disable System Integrity Protection (SIP) you can read more about that
 
 Secondly, we will want to modify the boot arguments of the non-volatile random access memory (nvram). I won't go into detail about this here there are a ton of resources online on how to disable certain security controls to run unsigned and untrusted binaries. You may also run into an issue where you need to self-sign. I will let that be an exercise for the reader.
 
-Lastly, I had a lazy workaround that I encountered during instrumentation. My analysis method was to attach `DVIA` using `lldb` first then continue the execution of the program using `c`. After that, I would then attach to the process using `r2frida`. If I tried to attach to the running instance of `DVIA` with only `frida` or `r2frida` I would get a crash related to a signing issue. 
+Lastly, I had a lazy workaround that I encountered during instrumentation. My analysis method was to attach `DVIA` using `lldb` first then continue executing the program using the command `c`. After that, I would attach to the process using `r2frida`. If I tried to attach to the running instance of `DVIA` with only `frida` or `r2frida` I would get a crash related to a signing issue. 
 
 ### Approach
 My initial approach was to port over the bypasses straight from the iOS application to macOS. But things are done just a little different on macOS so I had to modify my initial `r2frida` commands to fit how macOS interprets the `DVIA` apps arm64 binary. 
