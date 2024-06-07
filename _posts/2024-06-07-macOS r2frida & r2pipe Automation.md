@@ -20,13 +20,13 @@ Secondly, we will want to modify the boot arguments of the non-volatile random a
 Lastly, I had a lazy workaround that I encountered during instrumentation. My analysis method was to attach `DVIA` using `lldb` first then continue executing the program using the command `c`. After that, I would attach to the process using `r2frida`. If I tried to attach to the running instance of `DVIA` with only `frida` or `r2frida` I would get a crash related to a signing issue. 
 
 ### Approach
-My initial approach was to port over the bypasses straight from the iOS application to macOS. But things are done just a little different on macOS so I had to modify my initial `r2frida` commands to fit how macOS interprets the `DVIA` apps arm64 binary. 
-If you want to follow along you will need three tools installed locally on your machine:
+My initial approach was to port over the bypass script I created for the iOS application to macOS. But things are done just a little differently on macOS so I had to modify my initial `r2frida` commands to fit how macOS interprets the `DVIA` apps arm64 binary. 
+If you want to follow along you will need three tools:
 - *r2frida*
 - *lldb*
 - *Hopper (trial version works)*
 
-Things I will not cover are how to use `Hopper` and `lldb` extensively. I will assume the reader has some basic knowledge of each. Also as a note using `Hopper` alongside `r2frida` is a bit redundant since we can more or less use `r2frida` to search for classes, methods, and functions inside an application. 
+I will not cover how to use `Hopper` and `lldb`. I will assume the reader has some basic knowledge of each. Also as a note using `Hopper` alongside `r2frida` is a bit redundant since we can more or less use `r2frida` to search for classes, methods, and functions inside an application. 
 ### Jailbreak Checks
 Let's start with the two jailbreak bypasses found in the `DVIA` application. The first check was fairly straightforward and required no modification of my initial script. Where as the second I ran into some issues and needed to change my approach entirely.
 ##### Jailbreak 1 Bypass 
