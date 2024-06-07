@@ -3,6 +3,8 @@ layout: post
 title: macOS r2frida & r2pipe Automation
 ---
 
+![Untitled](79da7b35e2295f5a409602b9cdc1cb69.jpg)
+
 In this blog, I wanted to show an example of how to use how to use `r2frida` in macOS. Most of the ways I have used it up until now are solely on mobile platforms. I thought it would be a fun exercise to port over the iOS training application `DVIA` to macOS. 
 
 Installing the application is fairly straightforward. Using `sideloadly` I was able to install the `DVIA` directly to my M1 laptop. After installation, you will need to boot the laptop into recovery mode and run the following command in the terminal. 
