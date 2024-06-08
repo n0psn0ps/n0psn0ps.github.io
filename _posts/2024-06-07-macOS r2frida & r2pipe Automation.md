@@ -5,7 +5,7 @@ title: macOS r2frida & r2pipe Automation
 
 ![Untitled](/assets/head.jpeg)
 
-In this post, I wanted to demonstrate how to use `r2frida` on a "macOS" application. To date, I have mostly used `r2frida` on mobile platforms so I thought it would be a fun exercise to port over the bypasses from iOS to macOS. 
+In this post, I wanted to demonstrate how to use `r2frida` on a "macOS" application. To date, I have mostly used `r2frida` on mobile platforms so I thought it would be a fun exercise to port over the bypasses from [DVIA](https://github.com/prateek147/DVIA) on iOS to macOS. 
 
 Installing the application is fairly straightforward. Using `sideloadly` I was able to install the IPA directly to my M1 laptop. After installation, you will need to boot the laptop into recovery mode and run the following command in the terminal. 
 
