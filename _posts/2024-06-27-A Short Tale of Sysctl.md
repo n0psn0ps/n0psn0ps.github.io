@@ -20,7 +20,7 @@ In short, [sysctl](https://developer.apple.com/documentation/installer_js/system
 Reading the man page for `sysctl` we can see more than one flag is present that will allow us to read kernel-related flags: 
 
 ```
-		 kern.osrelease                              string        no
+     kern.osrelease                              string        no
      kern.osrevision                             integer       no
      kern.ostype                                 string        no
      kern.osversion                              string        yes
