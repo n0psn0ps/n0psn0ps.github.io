@@ -5,7 +5,7 @@ title: A Short Tale of Sysctl
 
 ![Untitled](/assets/syscallCover.jpeg)
 
-The topic of this blog post is not new. Other people have done a better job explaining how to analyze `syscalls`. Please see the following [presentations](https://youtu.be/qFLJjByneA4?si=ofEOOmSIk2_aIXau) and [training](https://www.youtube.com/live/sgNDYgLyAP4?si=BI_juNbKwFl2swu7&t=12395) on the subject by [Hexploitable](https://x.com/Hexploitable). 
+The topic of this blog post is not new. Other people have done a better job explaining how to analyze `syscalls`. Please see the following [presentation](https://youtu.be/qFLJjByneA4?si=ofEOOmSIk2_aIXau) and [training](https://www.youtube.com/live/sgNDYgLyAP4?si=BI_juNbKwFl2swu7&t=12395) on the subject by [Hexploitable](https://x.com/Hexploitable). 
 
 To preface I will not include a script or any reference to the application's bundle name. I will also leave the scripting exercise up to the reader. I mainly want to discuss a jailbreak protection found in mobile reversing that I have yet to run into.  
 
