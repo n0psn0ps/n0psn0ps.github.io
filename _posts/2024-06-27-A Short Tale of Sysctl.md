@@ -15,7 +15,7 @@ A system call or [syscall](https://opensource.apple.com/source/xnu/xnu-1504.3.12
 
 **What is sysctl**
 
-In short, [sysctl](https://developer.apple.com/documentation/installer_js/system/1812308-sysctl) is a system call responsible for gathering data about an operating system’s like kernel-related data or hardware components. 
+In short, [sysctl](https://developer.apple.com/documentation/installer_js/system/1812308-sysctl) is a system call responsible for gathering data about an operating system like kernel-related data or hardware components. 
 
 Reading the man page for `sysctl` we can see more than one flag is present that will allow us to read kernel-related flags: 
 
