@@ -1,4 +1,9 @@
-# A Short Tale of Sysctl
+---
+layout: post
+title: A Short Tale of Sysctl
+---
+
+![Untitled](/assets/syscallCover.jpeg)
 
 The topic of this blog post is not new. Other people have done a better job explaining how to analyze `syscalls`. Please see the following [presentations](https://youtu.be/qFLJjByneA4?si=ofEOOmSIk2_aIXau) and [training](https://www.youtube.com/live/sgNDYgLyAP4?si=BI_juNbKwFl2swu7&t=12395) on the subject by [Hexploitable](https://x.com/Hexploitable). 
 
@@ -14,7 +19,7 @@ In short, [sysctl](https://developer.apple.com/documentation/installer_js/system
 
 Reading the man page for `sysctl` we can see more than one flag is present that will allow us to read kernel-related flags: 
 
-```python
+```
 		 kern.osrelease                              string        no
      kern.osrevision                             integer       no
      kern.ostype                                 string        no
@@ -23,7 +28,7 @@ Reading the man page for `sysctl` we can see more than one flag is present that 
 
 If we are to run the following command in a macOS terminal we should get something like the following:
 
-```python
+```
 ❯ sysctl kern.version
 kern.version: Darwin Kernel Version 23.5.0: Wed May  1 20:12:58 PDT 2024; root:xnu-10063.121.3~5/RELEASE_ARM64_T6000
 ```
@@ -38,7 +43,7 @@ My thought process was first, to dig into the strings referenced in the binary a
 
 I used a frida script to start tracing the open, read, getpid, etc. In hopes that maybe a process was being caught or a file path… Using this same frida script to monitor the onLeave and onEnter callbacks I found that sysctl was the one system call being used for this jailbreak protection. It was called multiple times during the start of the application. I noticed various calls to the following in the mibs value of sysctl. 
 
-```python
+```
         "1,1": "KERN_OSTYPE",
         "1,2": "KERN_OSRELEASE",
         "1,4": "KERN_VERSION",
@@ -49,7 +54,7 @@ I used a frida script to start tracing the open, read, getpid, etc. In hopes tha
 
 Sysctl felt like a decent candidate since it was likely doing a check against the kernel. Also I could not find another reasonable system call used in the application binary that would protect an unsupported version of the OS. Using r2 we can see when listing the symbols sysctl is indeed being used.
 
-```python
+```
 [0x100be0000]> is~+sysctl
 0x0 u sysctl
 0x0 u sysctlbyname
@@ -57,7 +62,7 @@ Sysctl felt like a decent candidate since it was likely doing a check against th
 
 and the binary contains more than one cross-reference to sysctl. 
 
-```python
+```
 [0x1000061d0]> axt 0x100e3ba60
 sym.func.1000570e4 0x10005725c [CALL:--x] bl sym.imp.sysctl
 sym.func.1001c4398 0x1001c4420 [CALL:--x] bl sym.imp.sysctl
@@ -74,7 +79,7 @@ sym.func.100d54ae4 0x100d54bf0 [CALL:--x] bl sym.imp.sysctl
 
 Interestingly each function above contained a [cbz](https://developer.arm.com/documentation/ddi0597/2024-03/Base-Instructions/CBNZ--CBZ--Compare-and-Branch-on-Nonzero-or-Zero-?lang=en) or compare branch zero right after the branch and link operation for the sysctl system call. And the amount of kernel checks I was from sysctl were the same number of xrefs. So this was likely the culprit of the check being done.
 
-```python
+```
 [0x1001c4398]> pdga @ sym.func.1001c4398 | grep -i cbz -B 1
     0x1001c4420 bl sym.imp.sysctl               |    iVar1 = sym.imp.sysctl(iVar3 + 0x20, 2, &iStack_48, &uStack_58, 0, 0);
     0x1001c4424 cbz w0, 0x1001c44ec             |    if (iVar1 == 0) {
@@ -82,7 +87,7 @@ Interestingly each function above contained a [cbz](https://developer.arm.com/do
 
 If we seek the specified function and instructions. We see an if-else statement that does a comparison against the 32-bit integer iVar1 which is the value of the sysctl system call. So if this integer is equal to zero it will run the block of code inside the if statement. 
 
-```python
+```
     0x1001c4424 cbz w0, 0x1001c44ec             |    if (iVar1 == 0) {
     0x1001c44f0 bl sym.imp.time                 |        sym.imp.time(&iStack_50);
     0x1001c44f8 bl sym.imp.swift_bridgeObjectRelease    |        sym.imp.swift_bridgeObjectRelease(iVar3);
