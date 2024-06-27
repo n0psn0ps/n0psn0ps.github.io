@@ -77,7 +77,7 @@ sym.func.100d54ae4 0x100d54bf0 [CALL:--x] bl sym.imp.sysctl
 [TRUNCATED]
 ```
 
-Interestingly each function above contained a [cbz](https://developer.arm.com/documentation/ddi0597/2024-03/Base-Instructions/CBNZ--CBZ--Compare-and-Branch-on-Nonzero-or-Zero-?lang=en) or compare branch zero right after the branch and link operation for the sysctl system call. And the amount of kernel checks I was from sysctl were the same number of xrefs. So this was likely the culprit of the check being done.
+Interestingly each function above contained a [cbz](https://developer.arm.com/documentation/ddi0597/2024-03/Base-Instructions/CBNZ--CBZ--Compare-and-Branch-on-Nonzero-or-Zero-?lang=en) or compare branch zero right after the branch with link operation for the sysctl system call. And the amount of kernel checks I was from sysctl were the same number of xrefs. So this was likely the culprit of the check being done.
 
 ```
 [0x1001c4398]> pdga @ sym.func.1001c4398 | grep -i cbz -B 1
