@@ -7,17 +7,17 @@ title: A Short Tale of Sysctl
 
 The topic of this blog post is not new. Other people have done a better job explaining how to analyze `syscalls`. Please see the following [presentation](https://youtu.be/qFLJjByneA4?si=ofEOOmSIk2_aIXau) and [training](https://www.youtube.com/live/sgNDYgLyAP4?si=BI_juNbKwFl2swu7&t=12395) on the subject by [Hexploitable](https://x.com/Hexploitable). 
 
-To preface I will not include a script or any reference to the application's bundle name. I will also leave the scripting exercise up to the reader. I mainly want to discuss a jailbreak protection found in mobile reversing that I have yet to run into.  
+To preface I will not include a script or any reference to the application's bundle name. I will also leave the scripting exercise up to the reader. I mainly want to discuss a jailbreak protection found in mobile reversing that I have not personally encountered.  
 
 ### What is a syscall?
 
-A system call or [syscall](https://opensource.apple.com/source/xnu/xnu-1504.3.12/bsd/kern/syscalls.master) is a lower-level request or command made to the OS kernel. Think of this as the lowest level of communication between userland (application) to the kernel asking for a service such as a file operation or network-level communication. 
+A system call or [syscall](https://opensource.apple.com/source/xnu/xnu-1504.3.12/bsd/kern/syscalls.master) is a lower-level request or command made to the OS kernel. Think of this as the lowest level of communication between userland (application) and the kernel asking for a service such as a file operation or network-level communication. 
 
 **What is sysctl**
 
 In short, [sysctl](https://developer.apple.com/documentation/installer_js/system/1812308-sysctl) is a system call responsible for gathering data about an operating system like kernel-related data or hardware components. 
 
-Reading the man page for `sysctl` we can see more than one flag is present that will allow us to read kernel-related flags: 
+Reading the man page for `sysctl` we can see more than one flag is present that will allow us to read kernel-related info: 
 
 ```
      kern.osrelease                              string        no
@@ -39,7 +39,7 @@ Now that we have some level of character-building for our story let's dig into t
 
 During my initial investigation, I installed and attempted to start the application on a jailbroken rootful and rootless device. I was met with two states one that would either stop the execution of what we will call the “Login ViewController” on the rootful device or state two on a rootless device where the app would continue execution to the Login prompt. Based on this side-by-side behavior, I deduced that some checks were being done against the device in the rootful state. 
 
-My thought process was first, to dig into the strings referenced in the binary and the use of the [NSFileManager](https://developer.apple.com/documentation/foundation/filemanager) class. Using frida-trace I saw that a specific ViewController was loaded called and disallowed the user from login into the application. This was a dead end so I decided to pivot into searching for various system calls. 
+My thought process was first, to dig into the strings referenced in the binary and the use of the [NSFileManager](https://developer.apple.com/documentation/foundation/filemanager) class. Using frida-trace I saw that a specific ViewController was loaded called and disallowed the user from login to the application. This was a dead end so I decided to pivot into searching for various system calls. 
 
 I used a frida script to start tracing the open, read, getpid, etc. In hopes that maybe a process was being caught or a file path… Using this same frida script to monitor the onLeave and onEnter callbacks I found that sysctl was the one system call being used for this jailbreak protection. It was called multiple times during the start of the application. I noticed various calls to the following in the mibs value of sysctl. 
 
@@ -52,7 +52,7 @@ I used a frida script to start tracing the open, read, getpid, etc. In hopes tha
 
 ### Comparison on sysctl
 
-Sysctl felt like a decent candidate since it was likely doing a check against the kernel. Also I could not find another reasonable system call used in the application binary that would protect an unsupported version of the OS. Using r2 we can see when listing the symbols sysctl is indeed being used.
+Sysctl felt like a decent candidate since it was likely doing a check against the kernel. Also, I could not find another reasonable system call used in the application binary that would protect an unsupported version of the OS. Using r2 we can see when listing the symbols sysctl is indeed being used.
 
 ```
 [0x100be0000]> is~+sysctl
@@ -77,7 +77,7 @@ sym.func.100d54ae4 0x100d54bf0 [CALL:--x] bl sym.imp.sysctl
 [TRUNCATED]
 ```
 
-Interestingly each function above contained a [cbz](https://developer.arm.com/documentation/ddi0597/2024-03/Base-Instructions/CBNZ--CBZ--Compare-and-Branch-on-Nonzero-or-Zero-?lang=en) or compare branch zero right after the branch with link operation for the sysctl system call. And the amount of kernel checks I was from sysctl were the same number of xrefs. So this was likely the culprit of the check being done.
+Interestingly each function above contained a [cbz](https://developer.arm.com/documentation/ddi0597/2024-03/Base-Instructions/CBNZ--CBZ--Compare-and-Branch-on-Nonzero-or-Zero-?lang=en) or compare branch zero right after the branch with link operation for the sysctl system call. And the amount of kernel checks I saw from sysctl matched the same number of xrefs. So this was likely the culprit of the check being done.
 
 ```
 [0x1001c4398]> pdga @ sym.func.1001c4398 | grep -i cbz -B 1
