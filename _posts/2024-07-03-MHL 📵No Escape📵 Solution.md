@@ -1,7 +1,6 @@
-
 ---
 layout: post
-title: MHL 📵No Escape📵 Solution
+title: MHL No Escape Solution
 ---
 
 ![Untitled](/assets/blink02.jpg)
@@ -116,7 +115,7 @@ hits: 1
 
 List exports grep escape keyword
 
-```python
+```
 [0x104068868]> :iE~+escape
 [TRUNCATED]
 0x1041b8160 v $s9No_Escape11AppDelegateCMn
@@ -142,7 +141,7 @@ Parse functions of interest
 
 Seek to the addresses and print out assembly instructions at that location. I was particularly interested in the tbz and mov instructions. 
 
-```python
+```
 [0x104068868]> s 0x10406a068
 [0x10406a068]> pd			
 [TRUNCATED]
@@ -182,13 +181,13 @@ Since I found the exported function of interest I decided to also pull the IPA a
 
 Loading the binary into r2
 
-```python
+```
 ❯ r2 -AA No\ Escape
 ```
 
 Seek to function and locate 4 references to checks on the device. 
 
-```python
+```
 [0x10000a068]> pdf~+sym
             ; CALL XREF from sym.func.1000047a0 @ 0x100004934(x)
             ; CALL XREF from sym.func.100006940 @ 0x10000696c(x)
@@ -203,7 +202,7 @@ Seeking to each check addresses and analyze the add op code
 
 Check for jailbreak files
 
-```python
+```
 │           0x10000a168      00c01991       add x0, x0, 0x670          ; 0x100150670 ; "/Applications/Cydia.app"
 │           0x10000a198      00401a91       add x0, x0, 0x690          ; 0x100150690 ; "/Library/MobileSubstrate/MobileSubstrate.dylib"
 │           0x10000a1c0      00fc1a91       add x0, x0, 0x6bf          ; 0x1001506bf ; "/bin/bash"
@@ -214,27 +213,27 @@ Check for jailbreak files
 
 Check for writable system directories
 
-```python
+```
 │           0x10000a47c      00001991       add x0, x0, 0x640          ; 0x100150640 ; "/private/jailbreak_test.txt"
 │           0x10000a4b0      00701991       add x0, x0, 0x65c          ; 0x10015065c ; "This is a test."
 ```
 
 Check for cydia
 
-```python
+```
  pdf~add
 │           0x10000a7d4      00401891       add x0, x0, 0x610          ; 0x100150610 ; "cydia://package/com.example.package"
 ```
 
 Check sandbox violation
 
-```python
+```
 │           0x10000a958      00c01791       add x0, x0, 0x5f0          ; 0x1001505f0 ; "/private/var/lib/apt/"
 ```
 
 Check for all tbz and mov op codes 
 
-```python
+```
 [0x10000a068]> pdf~tbz; pdf~mov
 │       ┌─< 0x10000a078      a0000036       tbz w0, 0, 0x10000a08c
 │       ┌─< 0x10000a09c      a8000036       tbz w8, 0, 0x10000a0b0
@@ -279,7 +278,7 @@ I thought using an r2pipe script to automated this bypass would be a fun exercis
 
 We are only concerned about the first 3 mov instructions in the exported function. So we will use the following one-liner to seek the location and print out all the mov instruction registers.
 
-```python
+```
 s `:iE~+jail[0]`; pd~mov[1]]
 ```
 
@@ -287,7 +286,7 @@ s `:iE~+jail[0]`; pd~mov[1]]
 
 We are only concerned about the 4 tbz instructions in the exported function. So we will use the one-liner below to s to the location of the function and print out all the tbz instruction registers. 
 
-```python
+```
 s `:iE~+jail[0]`; pd~tbz[1]
 ```
 
