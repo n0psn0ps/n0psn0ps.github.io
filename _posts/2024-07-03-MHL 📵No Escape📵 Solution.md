@@ -1,6 +1,6 @@
 ---
 layout: post
-title: MHL No Escape Solution
+title: MHL 📵 No Escape 📵 Solution
 ---
 
 ![Untitled](/assets/blink02.jpg)
