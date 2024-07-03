@@ -284,7 +284,7 @@ s `:iE~+jail[0]`; pd~mov[1]]
 
 **tbz instructions**
 
-We are only concerned about the 4 tbz instructions in the exported function. So we will use the one-liner below to s to the location of the function and print out all the tbz instruction registers. 
+We are only concerned about the 4 tbz instructions in the exported function. So we will use the one-liner below to seek to the location of the function and print out all the tbz instruction registers. 
 
 ```
 s `:iE~+jail[0]`; pd~tbz[1]
