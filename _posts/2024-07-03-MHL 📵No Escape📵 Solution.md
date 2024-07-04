@@ -291,3 +291,5 @@ s `:iE~+jail[0]`; pd~tbz[1]
 ```
 
 The final script can be found [here](https://github.com/n0psn0ps/automation-r2pipe/blob/main/noEscBypass.py). Thanks for reading. 😈
+
+![Untitled](/assets/cert.png)
