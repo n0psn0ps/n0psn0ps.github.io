@@ -272,7 +272,7 @@ Bypass boolean function
 
 ### Approach 0x02
 
-I thought using an r2pipe script to automated this bypass would be a fun exercise and extend on some other posts I have done over the last few months. But I wanted to take a different approach for the byapss. Instead of bypassing the exact function itself and modifying the underlying value, what about overwriting the tbz and mov instructions in the function responsible for this check? 
+I thought using an r2pipe script to automated this bypass would be a fun exercise and extend on some other posts I have done over the last few months. But I wanted to take a different approach for the bypass. Instead of bypassing the exact function itself and modifying the underlying value, what about overwriting the tbz and mov instructions in the function responsible for this check? 
 
 **mov instructions** 
 
