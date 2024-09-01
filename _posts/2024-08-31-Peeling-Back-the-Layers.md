@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Peeling Back the Layers of an Onion: Syscalls & ASM
+title: Peeling Back the Layers of an Onion - Syscalls & ASM
 ---
 
 ![Untitled](/assets/The_Art_Of_Nick_Blinko.jpeg)
