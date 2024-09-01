@@ -3,7 +3,7 @@ layout: post
 title: Peeling Back the Layers of an Onion: Syscalls & ASM
 ---
 
-![The Art Of Nick Blinko.jpeg](Peeling%20Back%20the%20Layers%20of%20an%20Onion%20Syscalls%20&%20ASM%20d35e654a51374a588b7a54e07d60b13b/The_Art_Of_Nick_Blinko.jpeg)
+![Untitled](/assets/The_Art_Of_Nick_Blinko.jpeg)
 
 Recently I wrote a [blog post](https://n0psn0ps.github.io/2024/06/27/A-Short-Tale-of-Sysctl/) on a mobile application I was testing. The application implemented a protection that disallowed the user from accessing the main login and dashboard of the app. I racked my brain against the problem over a weekend and wrote two demo applications to try and replicate the protection I saw. 
 
@@ -16,7 +16,7 @@ To replicate this issue, I decided to write an iOS application in a mix of Swift
 
 What I decided to implement in the ASM code was to check known paths and binaries on a jailbroken device. These paths would not be present on a jailed device. Typically in C, our code would look something like the following:
 
-```python
+```bash
 [TRUNCATED]
     int fd = access("/bin/bash", F_OK);
 [TRUNCATED]
@@ -24,7 +24,7 @@ What I decided to implement in the ASM code was to check known paths and binarie
 
 Then in ASM to call the `access` syscall would look something like this:
 
-```python
+```bash
 [TRUNCATED]
     mov x16, #33 // SYS_ACCESS (access)
     svc #0
@@ -38,7 +38,7 @@ When using a system call we use the `MOV` instruction along with the [*syscall n
 
 Our system call number for access is 33 or #33 in our assembly code. You can reference the syscall header [file](https://opensource.apple.com/source/xnu/xnu-1228/bsd/sys/syscall.h.auto.html) but in r2frida you can search using the `ask` command. I will talk about this later in approach 2. 
 
-```python
+```bash
 [0x100dfa434]> ask? | grep access
 0x80.284=access_extended
 0x80.33=access
@@ -52,7 +52,7 @@ faccessat=0x80,466,0,
 
 My first approach is to modify the Swift `checkForJailbreak` function then the return value of `check_jailbreak`. It is simple enough to use the same approach in my other blog post. The function in the original code will look like this:
 
-```python
+```bash
    func checkForJailbreak() -> Bool {
         return check_jailbreak() != 0
     }
@@ -60,7 +60,7 @@ My first approach is to modify the Swift `checkForJailbreak` function then the r
 
 And in r2frida like this:
 
-```python
+```bash
 [0x102fc6434]> :iE~+jail
 [TRUNCATED]
 0x10481c000 f check_jailbreak
@@ -68,7 +68,7 @@ And in r2frida like this:
 
 or
 
-```python
+```bash
 [0x102fc6434]> :iE~+jail
 [TRUNCATED]
 0x10481d51c f $s9svcCaller11ContentViewV17checkForJailbreakSbyF
@@ -76,7 +76,7 @@ or
 
 We can approach this bypass in two ways. First locating the address of the function and then dynamically tracing it. This will allow us to observe the return value of the function. As I had mentioned prior in the first section of this post the access system call will take a file path value and store that into a int var. This var will then contain either a `1` or `0`. We can confirm this based on the `Retval` in the terminal output. 
 
-```python
+```bash
 [0x102fc6434]> :iE~+jail
 [TRUNCATED]
 0x10481d51c f $s9svcCaller11ContentViewV17checkForJailbreakSbyF
@@ -89,7 +89,7 @@ INFO: resumed spawned process
 
 Second, we will want to dynamically instrument the function’s value from `0x1` to `0x0`, as seen below using `:di0`. This will be the same for both functions I called out above.
 
-```python
+```bash
 [0x102fc6434]> :di0 `:iE~+check_jailbreak[0]`
 [0x102fc6434]> :dc
 ```
@@ -98,20 +98,20 @@ Second, we will want to dynamically instrument the function’s value from `0x1`
 
 My third approach is to step back and search for the responsible system call and modify the underlying MOV instructions. We will want to set our config evals for the iOS binary. This is so we can explicitly search specific assembly instructions. 
 
-```python
+```bash
 .:e/
 ```
 
 Then using the following one-liner in r2frida we can search and grep out the supervisor calls.
 
-```python
+```bash
 [0x104bca434]> /ai svc | grep svc
 0x104bc8088             010000d4  svc 0
 ```
 
 Once we find the appropriate address of the supervisor call we will want to use `pd` along with `-50`. This will allow us to backtrace and look for the system call in the assembly code, plus the associated `MOV` instructions which will move the value of `1` into `x0`. You can see each of these commented in the text block below after the `CBZ` instructions.
 
-```python
+```bash
 [0x104bca434]> pd -50 @ 0x104bc8088
           [TRUNCATED]
             ;-- sym.check_jailbreak:
@@ -164,7 +164,7 @@ Once we find the appropriate address of the supervisor call we will want to use 
 
 Additionally, we can grep the `MOV` instructions associated with the access system call using the following one-liner.
 
-```python
+```bash
 [0x104bca434]> pd -50 @ 0x104bc8088 | grep 'mov x0, 1'
         │   0x104bc8028      200080d2       mov x0, 1
        │    0x104bc8064      200080d2       mov x0, 1
@@ -172,13 +172,13 @@ Additionally, we can grep the `MOV` instructions associated with the access syst
 
 To bypass this check we want to change the value of each `mov x0, 1` to `mov x0, 0`.
 
-```python
+```bash
 wa mov x0, 0 @ 0x104bc8028; wa mov x0, 0 @ 0x104bc8064
 ```
 
 Lastly, our script will look something like this: 
 
-```python
+```bash
 # file checker test
 import r2pipe
 import time
