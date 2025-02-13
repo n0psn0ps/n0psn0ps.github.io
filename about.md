@@ -3,7 +3,7 @@ layout: page
 title: About
 ---
 
-Senior Mobile Security Engineer [@______](https://youtu.be/tCHKIdup5Lo?si=XZzLTlztVa6xmLZH)
+Staff Mobile Security Architect [@______](https://youtu.be/tCHKIdup5Lo?si=XZzLTlztVa6xmLZH)
 
 Passionate about mobile related hacking.
 
