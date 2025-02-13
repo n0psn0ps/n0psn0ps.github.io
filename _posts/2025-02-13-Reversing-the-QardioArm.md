@@ -1,20 +1,20 @@
 ---
 layout: post
-title: Reversing the Qardio ARM
+title: Reversing the QardioArm
 ---
 ![Untitled](/assets/blinko-001.png)
 
-This is a two-part blog post disclosing the first set of CVEs *(CVE-2025-20615, CVE-2025-23421, and CVE-2025-24836)* for the Qardio ARM, a wireless blood pressure monitor. I was first interested in the device because of its hardware, which I will discuss in another blog post. 
+This is a two-part blog post disclosing the first set of CVEs *(CVE-2025-20615, CVE-2025-23421, and CVE-2025-24836)* for the QardioArm, a wireless blood pressure monitor. I was first interested in the device because of its hardware, which I will discuss in another blog post. 
 
 ### Part 0x1 - Exposed Credentials
 
-The mobile application was simple. You create a username and password and login to the application to begin pairing and using the Qardio ARM device. Though you can do the same for any of their mobile app-supported devices.
+The mobile application was simple. You create a username and password and login to the application to begin pairing and using the QardioArm device. Though you can do the same for any of their mobile app-supported devices.
 
 I started by decrypting and pulling the IPA onto my laptop. My main goal was to see what juicy information I could find inside the compiled application. To my surprise, there was a plist file with more than one set of production-level credentials. I will leave that exercise to the reader…
 
 After finding this plist file I incrementally logged into each set of credentials. One set exposed an interesting Menu option. I found that an engineering panel was present in the App Route. This was found in the `Qardio.AppRoutes` class and initialized the `-[Engineering init]` process that could be used to access the engineering menu. 
 
-This menu allowed for the user to send commands to the Qardio ARM device via the mobile application. Seems like a feature that was not intended to be in a production application. Using [mrmacete’s](https://x.com/bezjaje) objc-method-observer [script](https://www.notion.so/Reversing-the-Qardio-ARM-188d977325a9804fa647fe83f5cffa85?pvs=21). I was able to trace the initialization process of this object. 
+This menu allowed for the user to send commands to the QardioArm device via the mobile application. Seems like a feature that was not intended to be in a production application. Using [mrmacete’s](https://x.com/bezjaje) objc-method-observer [script](https://www.notion.so/Reversing-the-Qardio-ARM-188d977325a9804fa647fe83f5cffa85?pvs=21). I was able to trace the initialization process of this object. 
 
 ```python
 (0x28149ba40)  -[EngineeringMenuItem init]
@@ -37,7 +37,7 @@ This menu allowed for the user to send commands to the Qardio ARM device via the
 RET: <EngineeringMenuItem: 0x28149ba40>
 ```
 
-In iOS the responsible class method is `+[MenuCollectionViewDataSource items]`. You can use the script to add the EngineeringMenuItem. A Qardio ARM device needs to be paired to send commands over the console.
+In iOS the responsible class method is `+[MenuCollectionViewDataSource items]`. You can use the script to add the EngineeringMenuItem. A QardioArm device needs to be paired to send commands over the console.
 
 ```swift
 if (ObjC.available) {
@@ -73,11 +73,11 @@ Java.perform(function() {
 
 ### Part 0x2 - Chars and CMDs
 
-Onto reversing the unencrypted Bluetooth connection with the Qardio ARM device. This device uses a small microcontroller powered by four AAA batteries to engage a small pump and start the blood pressure measurement process. If you are interested in the general schematics of the device you can find all internal details on the FCC website. I may dump the microcontroller firmware on my GitHub at a later point for anyone interested. 
+Onto reversing the unencrypted Bluetooth connection with the QardioArm device. This device uses a small microcontroller powered by four AAA batteries to engage a small pump and start the blood pressure measurement process. If you are interested in the general schematics of the device you can find all internal details on the FCC website. I may dump the microcontroller firmware on my GitHub at a later point for anyone interested. 
 
 Each start measurement command is sent over a Bluetooth connection to the mobile application. The results are displayed in the application dashboard, showing the patient's corresponding values to the clinician. 
 
-My next goal was to obtain the UUID identified for the BLE characteristic, the property assigned to the characteristic, and the value of the characteristic length. iOS uses the [CBCharacteristic](https://developer.apple.com/documentation/corebluetooth/cbcharacteristic) class to send commands over Bluetooth. So using a custom Frida script I traced the value of each and began the reversing process. Using my script I was able to observe the following output when connecting the Qardio ARM device and starting a command:
+My next goal was to obtain the UUID identified for the BLE characteristic, the property assigned to the characteristic, and the value of the characteristic length. iOS uses the [CBCharacteristic](https://developer.apple.com/documentation/corebluetooth/cbcharacteristic) class to send commands over Bluetooth. So using a custom Frida script I traced the value of each and began the reversing process. Using my script I was able to observe the following output when connecting the QardioArm device and starting a command:
 
 ```swift
 [*] Writing value to characteristic: <CBCharacteristic: 0x280e95bc0, UUID = 583CB5B3-875D-40ED-9098-C39EB0C1983D, properties = 0x18, value = (null), notifying = NO> Value: {length = 2, bytes = 0xf101} Type: 0x0
