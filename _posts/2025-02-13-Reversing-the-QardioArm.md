@@ -116,7 +116,7 @@ CoreServiceCharacteristcs: ERROR! This is really too bad, iOS lost data, lastSto
 CoreServiceCharacteristcs: ERROR! Something has gone terribly wrong, lastStored > nextEnvelope.
 ```
 
-Hooper has a direct string cross-reference in the following class `BPDService`:
+Hopper has a direct string cross-reference in the following class `BPDService`:
 
 ```swift
 ___CFConstantStringClassReference, 0x7c8, a583cb5b3875d40, 0x24 ; "583CB5B3-875D-40ED-9098-C39EB0C1983D", DATA XREF=-[BPDService peripheral:didDiscoverCharacteristicsForService:error:]+612, -[BPDService peripheral:didUpdateValueForCharacteristic:error:]+2720
