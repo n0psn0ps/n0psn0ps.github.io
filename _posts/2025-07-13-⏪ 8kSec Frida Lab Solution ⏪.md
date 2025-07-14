@@ -3,6 +3,7 @@ layout: post
 title: ⏪ 8kSec Frida Lab Solution ⏪
 ---
 
+![Untitled](/assets/blinko10.jpg)
 
 
 This blog post explains how to bypass the Frida detection in the 8kSec iOS lab challenge titled "Frida in the Middle." I aimed to approach this lab using two distinct techniques to circumvent the protection mechanism at roughly three different locations. Generally, this lab can be solved with the first patch I created, but I will share all three of the scripts on my GitHub at the end of the blog post. 
