@@ -14,7 +14,7 @@ Since the IPA is written in Swift and uses a trampoline executable to run the co
 
 The main dylib contains a Swift Boolean function that performs a socket check against localhost. This function takes four arguments—socket, address, address_len, and filedes—and returns either 0 or 1. It references a secondary function that points to freeaddrinfo and getaddrinfo. According to the man page:
 
-```swift
+```bash
 ...[F]unction is used to get a list of IP addresses and port numbers for host hostname and service servname.  It is a replacement for and provides more flexibility than the gethostbyname(3) and getservbyname(3) functions.
 ```
 
@@ -22,7 +22,7 @@ The main dylib contains a Swift Boolean function that performs a socket check ag
 
 The first technique involved bypassing the main function I called out above. Starting with analyzing the included libraries of the IPA we use the following command:
 
-```swift
+```bash
 :il
 ```
 
@@ -30,19 +30,19 @@ Our goal is to locate the exact function used to check for Frida in the dylib. O
 
 To examine all the exported functions we can use this command:
 
-```swift
+```bash
 :iE
 ```
 
 Then use this command to dynamically trace the output of the function once the application starts on the iOS device. 
 
-```swift
+```bash
 :dtf 0xsomeAddr
 ```
 
  We can then combine our final command into a one-liner like so. 
 
-```swift
+```bash
 r.cmd('s `:il~+dylibName[0]`;:di0 `:iE~+someFunc[0]`')
 ```
 
@@ -54,7 +54,7 @@ Analyzing the same function in Ghidra, we see a reference that I called out abov
 
 I renamed the variable for clarity during the reverse engineering process. 
 
-```swift
+```bash
 getAddInfo = _getaddrinfo((char *)(lVar7 + 0x20),(char *)(lVar8 + 0x20),&aStack_88,&local_90);
 ```
 
@@ -62,7 +62,7 @@ This variable takes in four values, which match the parameters from the man page
 
 Using Ghidra's string search command, we can find a reference to localhost. Examining the cross references leads us to the main function in the dylib that uses the getaddrinfo function to protect the app. 
 
-```swift
+```bash
 [TRUNCATED]
         00008c94 00 00 1c 91     add        x0=>s_127.0.0.1_0000d700,x0,#0x700               = "127.0.0.1"
         00008c98 28 01 80 52     mov        w8,#0x9
@@ -76,7 +76,7 @@ After examining the previous opcodes in Ghidra to the r2frida function trace fou
 
 We will run the following commands:
 
-```swift
+```bash
 s `:il~+dylibName[0]`;s `:iE~+someFunc[0]`; e anal.slow = false; e anal.nopskip = true; e emu.str = true; afr.; afna.;pdr.~+add
 afn auto.sub.104c94b70 0x104c90c40
 │ 0x104c90c4c      fdc30691       add x29, sp, 0x1b0
@@ -89,7 +89,7 @@ afn auto.sub.104c94b70 0x104c90c40
 
 And then we can use the `wao nop` command to `NOP` out the address:
 
-```swift
+```bash
 wao nop @ 0x104c90c94;:dc
 ```
 
@@ -99,7 +99,7 @@ wao nop @ 0x104c90c94;:dc
 
 Using Ghidra to analyze the Mach-O binary, we can identify the ARM64 `TBZ` instruction that controls the nested if-else statement. 
 
-```swift
+```bash
   if ((getAddInfo == 0) && (local_90 != (addrinfo *)0x0)) {
     getAddInfo = _socket(local_90->ai_family,local_90->ai_socktype,local_90->ai_protocol);
     if (getAddInfo < 0) {
@@ -110,7 +110,7 @@ I renamed the variables to clarify the application logic in the nested if-else s
 
 If the variable is greater than 0, execution will continue to the next three lines and set the result to false. The paVar3 variable will then be passed to the defer function nested within our main function of interest.
 
-```swift
+```bash
  [TRUNCATED]
       _$s16functionOfInterestF6$deferL_yyF(paVar3);
       _swift_bridgeObjectRelease(uVar9);
@@ -133,7 +133,7 @@ Similar to the first section of the code block, the value of paVar3 will be pass
 
 This will give us the proper ARM64 instructions for the function. 
 
-```swift
+```bash
 r.cmd('s `:il~+dylibName[0]`; s `:iE~+someFunc[0]`; e anal.slow = false; e anal.nopskip = true; e emu.str = true; afr.; afna.')
 time.sleep(2)
 r.cmd('wao nop @ `pdr.~+tbz[1]`')
@@ -142,7 +142,7 @@ r.cmd(':dc')
 
 Alternatively, we can modify the instruction to `mov w0, 0`, which effectively bypasses the check by directly changing the logic in the function's flow from an `ADD` to a `MOV`. 
 
-```swift
+```bash
 wa mov w0, 0
 ```
 
