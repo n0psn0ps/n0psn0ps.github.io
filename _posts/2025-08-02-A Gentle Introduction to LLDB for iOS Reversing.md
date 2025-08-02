@@ -3,7 +3,7 @@ layout: post
 title: A Gentle Introduction to LLDB for iOS Reversing
 ---
 
-![Untitled](/assets/OL01.jpeg)
+![Untitled](/assets/mizmor01.webp)
 
 Most of my recent blog posts have focused exclusively on the use of tools such as Frida, R2Frida, and Radare2. Each has detailed how to use these tools for automation scripting. 
 
