@@ -276,6 +276,7 @@ Process 46096 resuming
 In this post, I’ve shifted from purely showcasing Frida and Radare2 automation to demonstrating how LLDB can be used both interactively and programmatically to reverse and tweak a simple Swift iOS app. Readers with Swift experience and access to source code will find this hands-on approach a natural extension of “learning by doing,” whether on the Simulator or a jailbroken device. In future installments I may dive into reversing more complex targets—stay tuned for a deep-dive into local LLDB scripting.
 
 **Resources**
+
 My iOS application for LLDB debugging practice [here](https://github.com/n0psn0ps/LLDBDebugApp).
 [https://medium.com/@ahmedsulaiman/debugging-swift-code-with-lldb-b30c5cf2fd49](https://medium.com/@ahmedsulaiman/debugging-swift-code-with-lldb-b30c5cf2fd49) 
 [https://medium.com/@dubemike/level-up-your-debugging-skills-with-lldbs-v-p-and-po-commands-fec76c1ffee](https://medium.com/@dubemike/level-up-your-debugging-skills-with-lldbs-v-p-and-po-commands-fec76c1ffee)
