@@ -164,13 +164,13 @@ Current breakpoints:
   8.4: where = LLDBDebugApp.debug.dylib`static DebugHelper.printStatement() + 164 at DebugHelper.swift:21:15, address = 0x0000000100138a38, resolved, hit count = 1 
 ```
 
-Once the breakpoint is set the user can then begin reading variables, displaying related information for that value, or modifying it at run time. Let's move on to a couple of different ways to do so. 
+Once the breakpoint is set, the user can then begin reading variables, displaying related information for that value, or modifying it at run time. Let's move on to a couple of different ways to do so. 
 
 ### Reading Variables
 
-Once you found your line of interest in the code you can go about reading variables in 3 different ways. The one special thing to pay attention to is that you need to hit your code of interest first before it can be dislpayed in the debugger. 
+Once you have found your line of interest in the code, you can go about reading variables in 3 different ways. The one special thing to pay attention to is that you need to hit your code of interest first before it can be displayed in the debugger. 
 
-As an example for the math operation function. We will need to hit lines 33 and 34 before we can modify them at runtime. As an example we can use the three different ways of reading the frame variables.
+As an example, we can use the math operation function. We will need to hit lines 33 and 34 before we can modify them at runtime. We can use the three different ways of reading the frame variables.
 
 ```swift
 frame variable debugX
@@ -188,7 +188,7 @@ You can also shorten the keywords and add more than one variable.
 (Int) debugY = 8
 ```
 
-Which will show the variable type being acted on. The same can be done with the print object flag `po`.
+This will show the variable type being acted on. The same can be done with the print object flag `po`.
 
 ```swift
 (lldb) po debugX
@@ -199,7 +199,7 @@ Though it will not give you the variable type but that can be inferred from the 
 
 ### Modify variables
 
-Now that we have an understanding of setting a breakpoint in our demo app and then displaying the variable type data we can being the modification or reversing process. Though not as straight forward as frida and it’s subset of tools lldb can be a helpful in guide 
+Now that we have an understanding of setting a breakpoint in our demo app and then displaying the variable type data, we can begin the reversing process. Though not as straightforward as Frida and its subset of tools.  
 
 Let’s start with the `alwaysTrue` function. We can modify this function from two locations. Either the initial a Int variable, the b Int variable, or both. Let’s review the code block:
 
@@ -218,7 +218,7 @@ Let’s start with the `alwaysTrue` function. We can modify this function from t
     }
 ```
 
-Our goal is to modify the debugA and debugB values. So we will set a breakpoint on line 79 and 80 of this code. 
+Our goal is to modify the debugA and debugB values. So we will set a breakpoint on lines 79 and 80 of this code. 
 
 ![Untitled](/assets/lldb04.png)
 
@@ -238,7 +238,7 @@ You will need to type `next` or `n` to step through to the values being loaded i
 (Int) debugB = 0
 ```
 
-But notice the first debugA Int is loaded in memory not debugB. So you will need to step through once more to see both loaded in memory. 
+But notice the first debugA Int is loaded in memory, not debugB. So you will need to step through once more to see both loaded in memory. 
 
 ```swift
 (lldb) n
@@ -247,7 +247,7 @@ But notice the first debugA Int is loaded in memory not debugB. So you will need
 (Int) debugB = 20
 ```
 
-Now that we have our Int values in memory we can begin to overwrite the values by using the expression or `expr` keyword. This will allow us to rewrite the expression and modify the values at runtime - similar to frida. 
+Now that we have our Int values in memory, we can begin to overwrite the values by using the expression or `expr` keyword. This will allow us to rewrite the expression and modify the values at runtime - similar to frida. 
 
 Using the following and modifying debugA we can set it to the value of -100. 
 
@@ -263,7 +263,7 @@ We can then validate that the Int type was changed.
 (Int) debugA = -100
 ```
 
-And now we see the output is change from true to false.
+And now we see the output is changed from true to false.
 
 ```swift
 (lldb) c
@@ -273,7 +273,7 @@ Process 46096 resuming
 
 ## Conclusion
 
-In this post, I’ve shifted from purely showcasing Frida and Radare2 automation to demonstrating how LLDB can be used both interactively and programmatically to reverse and tweak a simple Swift iOS app. Readers with Swift experience and access to source code will find this hands-on approach a natural extension of “learning by doing,” whether on the Simulator or a jailbroken device. In future installments I may dive into reversing more complex targets—stay tuned for a deep-dive into local LLDB scripting.
+In this post, I’ve shifted from purely showcasing Frida and Radare2 automation to demonstrating how LLDB can be used both interactively and programmatically to reverse and tweak a simple Swift iOS app. Readers with Swift experience and access to source code will find this hands-on approach a natural extension of “learning by doing,” whether on the Simulator or a jailbroken device. In future installments, I may dive into reversing more complex targets—stay tuned for a deep-dive into local LLDB scripting.
 
 **Resources**
 
