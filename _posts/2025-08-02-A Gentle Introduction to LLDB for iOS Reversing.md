@@ -5,19 +5,19 @@ title: A Gentle Introduction to LLDB for iOS Reversing
 
 ![Untitled](/assets/mizmor01.webp)
 
-Most of my recent blog posts have focused exclusively on the use of tools such as Frida, R2Frida, and Radare2. Each has detailed how to use these tools for automation scripting. 
+Most of my blog posts recently have focused exclusively on the use of tools such as Frida, R2Frida, and Radare2. Each has detailed how I use them for automation scripting when reversing an iOS mobile application. 
 
-I have wanted to give insight on how I use lldb for reversing, plus automating the process using lldb's built-in Python bindings. The first post will review how to use lldb to reverse a simple iOS application I built in Swift. The second will deal with repeating the same steps using automation. I am a big proponent of learning by doing when it comes to education. I thought I would give back to some of my readers with the opportunity to use an app I created for lldb. 
+In this next series, I would like to share my workflow using lldb. The first post will review how to use lldb for reversing a simple iOS application I built in Swift. The second will deal with repeating the same steps using automation by utilizing Python bindings for lldb. I am a proponent of learning by doing when it comes to applying any new skill. Build something and then break it.
 
-**A few caveats:** *this post assumes you have prior coding experience in Swift, you have access to the source code you are debugging, and there is no need to play with ASLR. At a later date, I may write a guide on reversing an iOS game using lldb locally on a jailbroken device. If I am not lazy* 💩
+**A few caveats:** *This post assumes you have prior coding experience in Swift, you have access to the source code you are debugging, and there is no need to play with ASLR. At a later date, I may write a guide on reversing an iOS game using lldb locally on a jailbroken device. If I am not lazy* 💩
 
 Two resources I recommend are the book Advanced Apple Debugging & Reverse Engineering by [Walter Tyree](https://www.kodeco.com/u/tyreeapps) and the lldb documentation [here](https://lldb.llvm.org/index.html). If the reader is so inclined, I included a list of resources for additional reading. 
 
 ### Swift Code
 
-I decided to build a simple iOS Swift application. It performs some basic functionality such as printing a String and an array, math calculation of two numbers, Boolean comparison operation, a String comparison, and uses a lower-level C function call. This can be used either on a Simulator or a physical iOS device. 
+The iOS application I built is simple. It performs some basic functionality such as printing a String or an array, a calculation of two numbers, a Boolean comparison operation, a String comparison, and uses a lower-level C function call to print a String. When time allows, I may add other components to this app, such as a struct and an enum value type to modify. Note this can be used either on a Simulator or a physical iOS device. 
 
-To note, I had to use static variables in this Swift program rather than declaring the initial variables via the `let` or `var` keywords exclusively. I found when I did I would not be able to modify the reference to these variables, and likely the real values are found at an address location via a copy of the variable.  
+One challenge I faced is needing to use static variables in this Swift program rather than declaring the initial variables via the `let` or `var` keywords exclusively. I found when I did, I was unable to modify the reference to these variables, and likely the real values are found at an address location via a copy of the variable. More to come on this topic...
 
 Let’s dig into each of the function calls and operations. The first is a function to print a statement in Swift.
 
@@ -123,15 +123,15 @@ Quickly, reviewing the application at runtime, the user presses one of the avail
 
 ![Untitled](/assets/lldb01.png)
 
-So, our goal using lldb, if we look at the print statement operation code block, is to change either the static var value on line 17, the debugMessage value at line 19, or the print statement at line 21 at the end of that code block.
+So if we look at the print statement, our goal using lldb is to change either the static var value on line 17, the debugMessage value at line 19, or the print statement at line 21 at the end of that code block.
 
 ### Breakpoints
 
-There are a few ways you can set a breakpoint. In Xcode, using our the console, we can click the line 21 and it will automatically set a breakpoint for us.
+What is a breakpoint? Think of a breakpoint as pausing the execution of the application so some action can then be performed at runtime. Either inspecting, debugging, or modifying the application to alter its behavior. There are a few ways you can set a breakpoint. In Xcode, using the console, we can click line 21 and it will automatically set a breakpoint for us.
 
 ![Untitled](/assets/lldb02.png)
 
-Additionally, in lldb we can use the set keyword and our specified line with the `-l` flag for line then our line number.
+Additionally, in lldb, we can use the set keyword and our specified line with the `-l` flag for line, then our line number.
 
 ```swift
 breakpoint set -f DebugHelper.swift -l 21
@@ -168,7 +168,7 @@ Once the breakpoint is set, the user can then begin reading variables, displayin
 
 ### Reading Variables
 
-Once you have found your line of interest in the code, you can go about reading variables in 3 different ways. The one special thing to pay attention to is that you need to hit your code of interest first before it can be displayed in the debugger. 
+Once you have found your line or code block of interest, you can go about reading variables in 3 different ways. One special thing to pay attention to is that you need to hit your code of interest first before it can be displayed in the console of Xcode. 
 
 As an example, we can use the math operation function. We will need to hit lines 33 and 34 before we can modify them at runtime. We can use the three different ways of reading the frame variables.
 
@@ -201,7 +201,7 @@ Though it will not give you the variable type but that can be inferred from the 
 
 Now that we have an understanding of setting a breakpoint in our demo app and then displaying the variable type data, we can begin the reversing process. Though not as straightforward as Frida and its subset of tools.  
 
-Let’s start with the `alwaysTrue` function. We can modify this function from two locations. Either the initial a Int variable, the b Int variable, or both. Let’s review the code block:
+Let’s start with the `alwaysTrue` function. We can modify this function from two locations. Either the initial debugA Int variable, the debugB Int variable, or both. Let’s review the code block:
 
 ```swift
     static var debugA: Int = 0
@@ -218,7 +218,7 @@ Let’s start with the `alwaysTrue` function. We can modify this function from t
     }
 ```
 
-Our goal is to modify the debugA and debugB values. So we will set a breakpoint on lines 79 and 80 of this code. 
+Since our goal is to modify the debugA and debugB values, we will set a breakpoint on lines 79 and 80 of this code. 
 
 ![Untitled](/assets/lldb04.png)
 
@@ -247,7 +247,7 @@ But notice the first debugA Int is loaded in memory, not debugB. So you will nee
 (Int) debugB = 20
 ```
 
-Now that we have our Int values in memory, we can begin to overwrite the values by using the expression or `expr` keyword. This will allow us to rewrite the expression and modify the values at runtime - similar to frida. 
+Now that we have our Int values in memory, we can begin to overwrite the values by using the expression or `expr` keyword. This will allow us to rewrite the expression and modify the values at runtime - similar to Frida. 
 
 Using the following and modifying debugA we can set it to the value of -100. 
 
@@ -256,7 +256,7 @@ Using the following and modifying debugA we can set it to the value of -100.
 () $R0 = {}
 ```
 
-We can then validate that the Int type was changed.
+We can then validate that the Ints value was changed.
 
 ```swift
 (lldb) frame v debugA
@@ -273,7 +273,7 @@ Process 46096 resuming
 
 ## Conclusion
 
-In this post, I’ve shifted from purely showcasing Frida and Radare2 automation to demonstrating how LLDB can be used both interactively and programmatically to reverse and tweak a simple Swift iOS app. Readers with Swift experience and access to source code will find this hands-on approach a natural extension of “learning by doing,” whether on the Simulator or a jailbroken device. In future installments, I may dive into reversing more complex targets—stay tuned for a deep-dive into local LLDB scripting.
+In this post, I’ve shifted from purely showcasing Frida and Radare2 automation to demonstrating how LLDB can be used both interactively and programmatically to reverse and tweak a simple Swift iOS app. Readers with Swift experience and access to source code will find this hands-on approach a natural extension of “learning by doing,” whether on a Simulator or a jailbroken device. 
 
 **Resources**
 
